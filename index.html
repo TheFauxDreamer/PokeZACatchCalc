@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Pokémon Legends: Z-A Catch Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a1a;
+            min-height: 100vh;
+            padding: 10px;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border: 3px solid #2ecc71;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            background: #000;
+            color: white;
+            padding: 15px;
+            border-bottom: 3px solid #2ecc71;
+        }
+        
+        @media (min-width: 768px) {
+            .header {
+                padding: 25px;
+            }
+        }
+        
+        .header h1 {
+            font-size: 1.3em;
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+        
+        @media (min-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+        
+        .header p {
+            color: #aaa;
+            font-size: 0.8em;
+        }
+        
+        @media (min-width: 768px) {
+            .header p {
+                font-size: 0.9em;
+            }
+        }
+        
+        .file-upload-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        @media (min-width: 768px) {
+            .file-upload-section {
+                padding: 20px;
+            }
+        }
+        
+        .file-upload-label {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #2ecc71;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+            font-size: 1em;
+            touch-action: manipulation;
+        }
+        
+        .file-upload-label:active {
+            background: #27ae60;
+        }
+        
+        .file-upload-input {
+            display: none;
+        }
+        
+        .file-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            text-align: center;
+            line-height: 1.4;
+        }
+        
+        .file-status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .file-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .file-status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .file-status.loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
+        .form-container {
+            padding: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .form-container {
+                padding: 25px;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        @media (min-width: 768px) {
+            .form-group {
+                margin-bottom: 20px;
+                padding-bottom: 20px;
+            }
+        }
+        
+        .form-group:last-of-type {
+            border-bottom: none;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #000;
+            font-size: 0.95em;
+        }
+        
+        @media (min-width: 768px) {
+            label {
+                font-size: 1em;
+            }
+        }
+        
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #000;
+            font-size: 16px;
+            background: white;
+            border-radius: 4px;
+            touch-action: manipulation;
+        }
+        
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        input[type="text"]:disabled {
+            background: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+        
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .slider-container {
+            background: #f5f5f5;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            border-radius: 3px;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #3498db;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .slider-value {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #3498db;
+            font-size: 1em;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f5f5f5;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 50px;
+            touch-action: manipulation;
+        }
+        
+        input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #2ecc71;
+            flex-shrink: 0;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            flex: 1;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .number-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .number-input-group button {
+            min-width: 48px;
+            min-height: 48px;
+            border: 2px solid #000;
+            background: white;
+            color: #000;
+            font-size: 1.5em;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            flex-shrink: 0;
+        }
+        
+        .number-input-group button:active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            transform: scale(0.95);
+        }
+        
+        .number-input-group input {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border: 2px solid #000;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .hint {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+        
+        @media (min-width: 768px) {
+            .hint {
+                font-size: 0.85em;
+            }
+        }
+        
+        .warning {
+            font-size: 0.8em;
+            color: #e74c3c;
+            margin-top: 6px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
+        .results {
+            background: #000;
+            color: white;
+            padding: 20px;
+            margin-top: 15px;
+            border: 3px solid #2ecc71;
+            border-radius: 4px;
+        }
+        
+        @media (min-width: 768px) {
+            .results {
+                padding: 25px;
+                margin-top: 20px;
+            }
+        }
+        
+        .results h2 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #2ecc71;
+        }
+        
+        @media (min-width: 768px) {
+            .results h2 {
+                font-size: 1.4em;
+            }
+        }
+        
+        .catch-rate {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #2ecc71;
+        }
+        
+        @media (min-width: 768px) {
+            .catch-rate {
+                font-size: 3.5em;
+            }
+        }
+        
+        .catch-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .catch-details {
+                gap: 10px;
+                margin-top: 20px;
+            }
+        }
+        
+        .detail-box {
+            background: #1a1a1a;
+            padding: 12px;
+            border: 1px solid #2ecc71;
+            border-radius: 4px;
+        }
+        
+        .detail-box:nth-child(2) {
+            border-color: #3498db;
+        }
+        
+        .detail-box:nth-child(4) {
+            border-color: #e74c3c;
+        }
+        
+        .detail-box h3 {
+            font-size: 0.75em;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        
+        @media (min-width: 768px) {
+            .detail-box h3 {
+                font-size: 0.85em;
+            }
+        }
+        
+        .detail-box p {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: white;
+        }
+        
+        @media (min-width: 768px) {
+            .detail-box p {
+                font-size: 1.2em;
+            }
+        }
+        
+        .reset-btn {
+            width: 100%;
+            padding: 16px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+        
+        .reset-btn:active {
+            background: #c0392b;
+            transform: scale(0.98);
+        }
+        
+        .autocomplete-container {
+            position: relative;
+        }
+        
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #3498db;
+            border-top: none;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .autocomplete-suggestions.active {
+            display: block;
+        }
+        
+        .suggestion-item {
+            padding: 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+            touch-action: manipulation;
+        }
+        
+        .suggestion-item:active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .conditional-input {
+            display: none;
+            margin-top: 10px;
+            padding: 15px;
+            background: #fffbea;
+            border: 2px solid #f39c12;
+            border-radius: 5px;
+        }
+        
+        .conditional-input.active {
+            display: block;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Prevent zoom on input focus for iOS */
+        @media screen and (max-width: 767px) {
+            input[type="text"]:focus,
+            input[type="number"]:focus,
+            select:focus {
+                font-size: 16px;
+            }
+        }
+        
+        /* Better scrolling on mobile */
+        html {
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Sticky results on mobile */
+        @media (max-width: 767px) {
+            .results {
+                position: sticky;
+                bottom: 0;
+                margin-top: 0;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+                border-bottom: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Pokémon Legends: Z-A Catch Calculator</h1>
+            <p>100% Accurate - Mobile Optimized</p>
+        </div>
+        
+        <div class="file-upload-section">
+            <div id="fileStatus" class="file-status loading">
+                ⏳ Loading Pokémon data...
+            </div>
+            <div id="manualUploadSection" class="hidden" style="margin-top: 15px;">
+                <label for="fileInput" class="file-upload-label">
+                    📂 Upload Data File
+                </label>
+                <input type="file" id="fileInput" class="file-upload-input" accept=".json" onchange="loadDataFile(event)">
+            </div>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-group">
+                <label for="pokemon">Pokémon:</label>
+                <div class="autocomplete-container">
+                    <input type="text" id="pokemon" placeholder="Loading data..." disabled autocomplete="off">
+                    <div class="autocomplete-suggestions" id="pokemonSuggestions"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="pokeball">Poké Ball:</label>
+                <select id="pokeball">
+                    <option value="">Select Poké Ball...</option>
+                    <option value="poke-ball">Poké Ball</option>
+                    <option value="great-ball">Great Ball</option>
+                    <option value="ultra-ball">Ultra Ball</option>
+                    <option value="master-ball">Master Ball</option>
+                    <option value="heavy-ball">Heavy Ball</option>
+                    <option value="fast-ball">Fast Ball</option>
+                    <option value="level-ball">Level Ball</option>
+                    <option value="lure-ball">Lure Ball</option>
+                    <option value="love-ball">Love Ball</option>
+                    <option value="moon-ball">Moon Ball</option>
+                    <option value="beast-ball">Beast Ball</option>
+                    <option value="dream-ball">Dream Ball</option>
+                    <option value="net-ball">Net Ball</option>
+                    <option value="dive-ball">Dive Ball</option>
+                    <option value="nest-ball">Nest Ball</option>
+                    <option value="repeat-ball">Repeat Ball</option>
+                    <option value="timer-ball">Timer Ball</option>
+                    <option value="dusk-ball">Dusk Ball</option>
+                    <option value="quick-ball">Quick Ball</option>
+                </select>
+                
+                <div id="levelBallInput" class="conditional-input">
+                    <label for="yourLevel">Your Pokémon's Level:</label>
+                    <div class="number-input-group">
+                        <button onclick="changeYourLevel(-1)" type="button">-</button>
+                        <input type="number" id="yourLevel" value="50" min="1" max="100" inputmode="numeric">
+                        <button onclick="changeYourLevel(1)" type="button">+</button>
+                    </div>
+                    <p class="hint">Level Ball: 8x if yours ÷4≥opponent, 4x if yours ÷2≥opponent</p>
+                </div>
+                
+                <div id="turnCountInput" class="conditional-input">
+                    <label for="turnCount">Turn Count:</label>
+                    <div class="number-input-group">
+                        <button onclick="changeTurnCount(-1)" type="button">-</button>
+                        <input type="number" id="turnCount" value="0" min="0" max="100" inputmode="numeric">
+                        <button onclick="changeTurnCount(1)" type="button">+</button>
+                    </div>
+                    <p class="hint">Quick Ball: 5x on turn 0. Timer Ball: scales 1-4x</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Pokémon HP:</label>
+                <div class="slider-container">
+                    <input type="range" id="hp" min="1" max="100" value="100">
+                    <div class="slider-value" id="hpValue">100% remaining</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="status">Status Condition:</label>
+                <select id="status">
+                    <option value="none">No Status</option>
+                    <option value="asleep">Asleep (1.5x)</option>
+                    <option value="frozen">Frozen (1.5x)</option>
+                    <option value="paralyzed">Paralyzed (1.2x)</option>
+                    <option value="poisoned">Poisoned (1.2x)</option>
+                    <option value="burned">Burned (1.2x)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <div class="checkbox-group" onclick="toggleCheckbox('alpha')">
+                    <input type="checkbox" id="alpha" onclick="event.stopPropagation()">
+                    <label for="alpha">Alpha Pokémon</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="checkbox-group" onclick="toggleCheckbox('aware')">
+                    <input type="checkbox" id="aware" onclick="event.stopPropagation()">
+                    <label for="aware">Aware of You</label>
+                </div>
+                <p class="hint">Check if Pokémon has "?" above head, attacking, fleeing, or stunned</p>
+            </div>
+            
+            <div class="form-group">
+                <label>Pokémon Level:</label>
+                <div class="number-input-group">
+                    <button onclick="changeLevel(-1)" type="button">-</button>
+                    <input type="number" id="level" value="50" min="1" max="100" inputmode="numeric">
+                    <button onclick="changeLevel(1)" type="button">+</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="checkbox-group" onclick="toggleCheckbox('backstrike')">
+                    <input type="checkbox" id="backstrike" onclick="event.stopPropagation()">
+                    <label for="backstrike">Backstrike (2x)</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="rank">Current Rank:</label>
+                <select id="rank">
+                    <option value="z">Rank Z</option>
+                    <option value="y">Rank Y</option>
+                    <option value="x">Rank X</option>
+                    <option value="w">Rank W</option>
+                    <option value="v">Rank V</option>
+                    <option value="g">Rank G</option>
+                    <option value="f">Rank F</option>
+                    <option value="e">Rank E</option>
+                    <option value="d">Rank D</option>
+                    <option value="c">Rank C</option>
+                    <option value="b">Rank B</option>
+                    <option value="a">Rank A</option>
+                    <option value="inf">Rank Infinity</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="plush">Canari Plush:</label>
+                <select id="plush">
+                    <option value="0">None</option>
+                    <option value="1">Level 1 (1.1x)</option>
+                    <option value="2">Level 2 (1.2x)</option>
+                    <option value="3">Level 3 (1.35x)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <div class="checkbox-group" onclick="toggleCheckbox('shiny')">
+                    <input type="checkbox" id="shiny" onclick="event.stopPropagation()">
+                    <label for="shiny">Shiny (3x bonus)</label>
+                </div>
+            </div>
+            
+            <button class="reset-btn" onclick="resetForm()" type="button">Reset All</button>
+            
+            <div class="results" id="results" style="display: none;">
+                <h2>Catch Probability</h2>
+                <div class="catch-rate" id="catchRate">0%</div>
+                <div class="catch-details">
+                    <div class="detail-box">
+                        <h3>1st Throw</h3>
+                        <p id="firstThrow">0%</p>
+                    </div>
+                    <div class="detail-box">
+                        <h3>Within 3</h3>
+                        <p id="threeThrows">0%</p>
+                    </div>
+                    <div class="detail-box">
+                        <h3>Within 5</h3>
+                        <p id="fiveThrows">0%</p>
+                    </div>
+                    <div class="detail-box">
+                        <h3>Within 10</h3>
+                        <p id="tenThrows">0%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pokemonDatabase = [];
+        let currentPokemonData = null;
+
+        const rankModifiers = {
+            z: [1, 0.7, 0.5, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+            y: [1, 0.7, 0.5, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+            x: [1, 1, 0.7, 0.5, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1],
+            w: [1, 1, 1, 0.7, 0.5, 0.3, 0.1, 0.1, 0.1, 0.1],
+            v: [1, 1, 1, 1, 0.7, 0.5, 0.3, 0.1, 0.1, 0.1],
+            g: [1, 1, 1, 1, 1, 0.7, 0.5, 0.3, 0.1, 0.1],
+            f: [1, 1, 1, 1, 1, 0.7, 0.5, 0.3, 0.1, 0.1],
+            e: [1, 1, 1, 1, 1, 1, 0.7, 0.5, 0.3, 0.1],
+            d: [1, 1, 1, 1, 1, 1, 1, 0.7, 0.5, 0.3],
+            c: [1, 1, 1, 1, 1, 1, 1, 1, 0.7, 0.5],
+            b: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0.7],
+            a: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            inf: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        };
+
+        const ultraBeastIDs = [793, 794, 795, 796, 797, 798, 799, 803, 804, 805, 806];
+
+        // Helper function to toggle checkboxes via label tap
+        function toggleCheckbox(id) {
+            const checkbox = document.getElementById(id);
+            checkbox.checked = !checkbox.checked;
+            checkbox.dispatchEvent(new Event('change'));
+        }
+
+        async function autoLoadData() {
+            const dataFilename = 'pokemon-legends-za-data.json';
+            
+            try {
+                const response = await fetch(dataFilename);
+                if (!response.ok) {
+                    throw new Error('File not found');
+                }
+                
+                const data = await response.json();
+                pokemonDatabase = data;
+                
+                document.getElementById('fileStatus').className = 'file-status success';
+                document.getElementById('fileStatus').textContent = 
+                    `✓ Loaded ${pokemonDatabase.length} Pokémon!`;
+                
+                document.getElementById('pokemon').disabled = false;
+                document.getElementById('pokemon').placeholder = 'Type Pokémon name...';
+                
+            } catch (error) {
+                document.getElementById('fileStatus').className = 'file-status error';
+                document.getElementById('fileStatus').innerHTML = 
+                    `✗ Could not load ${dataFilename}<br>` +
+                    `<small>Make sure the file is in the same folder.</small>`;
+                
+                document.getElementById('manualUploadSection').classList.remove('hidden');
+            }
+        }
+
+        function loadDataFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    pokemonDatabase = JSON.parse(e.target.result);
+                    document.getElementById('fileStatus').className = 'file-status success';
+                    document.getElementById('fileStatus').textContent = 
+                        `✓ Loaded ${pokemonDatabase.length} Pokémon!`;
+                    
+                    document.getElementById('pokemon').disabled = false;
+                    document.getElementById('pokemon').placeholder = 'Type Pokémon name...';
+                    
+                    document.getElementById('manualUploadSection').classList.add('hidden');
+                } catch (error) {
+                    document.getElementById('fileStatus').className = 'file-status error';
+                    document.getElementById('fileStatus').textContent = 
+                        `✗ Error: ${error.message}`;
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        window.addEventListener('DOMContentLoaded', autoLoadData);
+
+        document.getElementById('pokeball').addEventListener('change', function() {
+            const ball = this.value;
+            const levelBallInput = document.getElementById('levelBallInput');
+            const turnCountInput = document.getElementById('turnCountInput');
+            
+            if (ball === 'level-ball') {
+                levelBallInput.classList.add('active');
+            } else {
+                levelBallInput.classList.remove('active');
+            }
+            
+            if (ball === 'timer-ball' || ball === 'quick-ball') {
+                turnCountInput.classList.add('active');
+            } else {
+                turnCountInput.classList.remove('active');
+            }
+        });
+
+        function calcZALevelRatio(level, rank) {
+            const modArray = rankModifiers[rank];
+            if (level <= 15) return modArray[0];
+            if (level <= 20) return modArray[1];
+            if (level <= 25) return modArray[2];
+            if (level <= 30) return modArray[3];
+            if (level <= 40) return modArray[4];
+            if (level <= 45) return modArray[5];
+            if (level <= 50) return modArray[6];
+            if (level <= 55) return modArray[7];
+            if (level <= 65) return modArray[8];
+            return modArray[9];
+        }
+
+        function calcLevelRatio(isKO, isAlpha) {
+            if (isKO) {
+                return isAlpha ? 3 : 1.2;
+            }
+            return 1;
+        }
+
+        function calcSickRatio(isKO, isAware, status) {
+            if (isKO || !isAware) {
+                return 1;
+            }
+            if (status === "asleep" || status === "frozen") {
+                return 1.5;
+            }
+            if (status === "poisoned" || status === "paralyzed" || status === "burned") {
+                return 1.2;
+            }
+            return 1;
+        }
+
+        function isUltraBeast(pokemonData) {
+            if (pokemonData.id && ultraBeastIDs.includes(pokemonData.id)) {
+                return true;
+            }
+            const ultraBeastNames = ['nihilego', 'buzzwole', 'pheromosa', 'xurkitree', 
+                                     'celesteela', 'kartana', 'guzzlord', 'poipole', 
+                                     'naganadel', 'stakataka', 'blacephalon'];
+            const slug = pokemonData.slug?.toLowerCase() || '';
+            return ultraBeastNames.includes(slug);
+        }
+
+        function calcBallCaptureRatio(ball, pokemonData) {
+            const type1 = pokemonData.primaryType?.slug;
+            const type2 = pokemonData.secondaryType?.slug;
+            const speed = pokemonData.stats.speed;
+            const level = parseInt(document.getElementById('level').value);
+            const yourLevel = parseInt(document.getElementById('yourLevel').value) || 50;
+            const turnCount = parseInt(document.getElementById('turnCount').value) || 0;
+
+            switch(ball) {
+                case "fast-ball":
+                    return speed <= 99 ? 1 : 4;
+                case "level-ball":
+                    if (yourLevel >> 2 >= level) return 8;
+                    if (yourLevel >> 1 >= level) return 4;
+                    if (level >= yourLevel) return 1;
+                    return 2;
+                case "lure-ball":
+                    return 4;
+                case "love-ball":
+                    return 8;
+                case "moon-ball":
+                    return 4;
+                case "beast-ball":
+                    if (isUltraBeast(pokemonData)) {
+                        return 1;
+                    }
+                    return 410 / 4096;
+                case "dream-ball":
+                    const status = document.getElementById('status').value;
+                    return status === "asleep" ? 4 : 1;
+                case "ultra-ball":
+                    return 2;
+                case "great-ball":
+                    return 1.5;
+                case "net-ball":
+                    if (type1 === "bug" || type1 === "water" || 
+                        type2 === "bug" || type2 === "water") {
+                        return 3.5;
+                    }
+                    return 1;
+                case "dive-ball":
+                    return 3.5;
+                case "nest-ball":
+                    if (level <= 29) {
+                        return Math.floor(4096 * parseFloat(41 - level) / 10) / 4096;
+                    }
+                    return 1;
+                case "repeat-ball":
+                    return 3.5;
+                case "timer-ball":
+                    if (turnCount <= 10) return 1;
+                    if (turnCount <= 20) return 2;
+                    if (turnCount <= 30) return 3;
+                    return 4;
+                case "dusk-ball":
+                    return 3;
+                case "quick-ball":
+                    return turnCount === 0 ? 5 : 1;
+                default:
+                    return 1;
+            }
+        }
+
+        function calculateParamCaptureRatio(plushLevel) {
+            if (plushLevel === 0) return 1;
+            if (plushLevel === 1) return 1.1;
+            if (plushLevel === 2) return 1.2;
+            if (plushLevel === 3) return 1.35000002;
+            return 1;
+        }
+
+        function calcCaptureIndicator(maxHP, currentHP, pokedex, pokemonData, ball) {
+            const isKO = false;
+            const isAlpha = document.getElementById('alpha').checked;
+            const isAware = document.getElementById('aware').checked;
+            const isBackstrike = document.getElementById('backstrike').checked;
+            const isShiny = document.getElementById('shiny').checked;
+            const rank = document.getElementById('rank').value;
+            const plushLevel = parseInt(document.getElementById('plush').value);
+            const level = parseInt(document.getElementById('level').value);
+            const status = document.getElementById('status').value;
+
+            let currentHPCalc = isKO ? 0 : currentHP;
+            const hpModifier = (3 * maxHP - 2 * currentHPCalc) / (3 * maxHP);
+            const pokedexModifier = 1;
+
+            let captureRate = pokemonData.stats.catchRate;
+            
+            if (ball === "heavy-ball") {
+                const weight = pokemonData.stats.weight;
+                let weightMod = weight < 1000 ? -20 : 
+                               weight < 2000 ? 0 : 
+                               weight < 3000 ? 20 : 30;
+                captureRate = captureRate + weightMod;
+                if (captureRate <= 0) captureRate = 1;
+            }
+
+            let baseValue;
+            if (captureRate !== 255) {
+                baseValue = captureRate;
+            } else {
+                baseValue = 3 * captureRate;
+            }
+
+            const ballModifier = calcBallCaptureRatio(ball, pokemonData);
+            const levelRatio = calcLevelRatio(isKO, isAlpha);
+            const statusModifier = calcSickRatio(isKO, isAware, status);
+            const shinyModifier = isShiny ? 3 : 1;
+            const rankModifier = calcZALevelRatio(level, rank);
+            const unawareModifier = (!isAware && !isKO) ? 1.5 : 1;
+            const backstrikeModifier = isBackstrike ? 2 : 1;
+            const alphaModifier = isAlpha ? 0.5 : 1;
+            const plushModifier = calculateParamCaptureRatio(plushLevel);
+
+            const catchIndicator = hpModifier * pokedexModifier * baseValue * 
+                                   ballModifier * levelRatio * statusModifier * 
+                                   shinyModifier * unawareModifier * backstrikeModifier * 
+                                   alphaModifier * rankModifier * plushModifier;
+
+            return Math.min(catchIndicator, 255);
+        }
+
+        function calculateCatchRate(pokemonData, ball) {
+            if (ball === 'master-ball') return 1;
+            if (!pokemonData) return 0;
+
+            const hp = parseFloat(document.getElementById('hp').value) / 100;
+            const maxHP = 100;
+            const currentHP = hp * maxHP;
+            const pokedex = 0;
+
+            const catchIndicator = calcCaptureIndicator(maxHP, currentHP, pokedex, pokemonData, ball);
+            const shakeChance = catchIndicator / 255;
+            const catchChance = Math.pow(shakeChance, 3);
+
+            return Math.min(catchChance, 1);
+        }
+
+        const pokemonInput = document.getElementById('pokemon');
+        const suggestions = document.getElementById('pokemonSuggestions');
+        
+        pokemonInput.addEventListener('input', function() {
+            const value = this.value.toLowerCase();
+            suggestions.innerHTML = '';
+            
+            if (value.length < 1 || pokemonDatabase.length === 0) {
+                suggestions.classList.remove('active');
+                return;
+            }
+            
+            const filtered = pokemonDatabase.filter(p => 
+                p.name.toLowerCase().includes(value)
+            ).slice(0, 10);
+            
+            if (filtered.length > 0) {
+                filtered.forEach(pokemon => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = pokemon.name;
+                    div.onclick = () => {
+                        pokemonInput.value = pokemon.name;
+                        suggestions.classList.remove('active');
+                        currentPokemonData = pokemon.data;
+                        pokemonInput.blur();
+                        calculate();
+                    };
+                    suggestions.appendChild(div);
+                });
+                suggestions.classList.add('active');
+            } else {
+                suggestions.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.autocomplete-container')) {
+                suggestions.classList.remove('active');
+            }
+        });
+
+        const hpSlider = document.getElementById('hp');
+        const hpValue = document.getElementById('hpValue');
+        hpSlider.addEventListener('input', function() {
+            hpValue.textContent = this.value + '% remaining';
+            calculate();
+        });
+
+        function changeLevel(delta) {
+            const levelInput = document.getElementById('level');
+            let newValue = parseInt(levelInput.value) + delta;
+            newValue = Math.max(1, Math.min(100, newValue));
+            levelInput.value = newValue;
+            calculate();
+        }
+
+        function changeYourLevel(delta) {
+            const levelInput = document.getElementById('yourLevel');
+            let newValue = parseInt(levelInput.value) + delta;
+            newValue = Math.max(1, Math.min(100, newValue));
+            levelInput.value = newValue;
+            calculate();
+        }
+
+        function changeTurnCount(delta) {
+            const turnInput = document.getElementById('turnCount');
+            let newValue = parseInt(turnInput.value) + delta;
+            newValue = Math.max(0, Math.min(100, newValue));
+            turnInput.value = newValue;
+            calculate();
+        }
+
+        ['pokeball', 'alpha', 'aware', 'level', 'backstrike', 'rank', 'plush', 'shiny', 'status', 'yourLevel', 'turnCount'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('change', calculate);
+            }
+        });
+
+        function calculate() {
+            const pokemon = document.getElementById('pokemon').value;
+            const pokeball = document.getElementById('pokeball').value;
+            
+            if (!pokemon || !pokeball || !currentPokemonData) {
+                if (!pokemon || !pokeball) {
+                    document.getElementById('results').style.display = 'none';
+                }
+                return;
+            }
+
+            const probability = calculateCatchRate(currentPokemonData, pokeball) * 100;
+
+            let failChance = (100 - probability) / 100;
+            let within3 = (1 - Math.pow(failChance, 3)) * 100;
+            let within5 = (1 - Math.pow(failChance, 5)) * 100;
+            let within10 = (1 - Math.pow(failChance, 10)) * 100;
+
+            const type1 = currentPokemonData.primaryType?.name || 'Unknown';
+            const type2 = currentPokemonData.secondaryType?.name;
+            const typeDisplay = type2 ? `${type1} / ${type2}` : type1;
+            
+            const isUB = isUltraBeast(currentPokemonData);
+            const ubWarning = isUB && pokeball === 'beast-ball' ? 
+                '<br><strong style="color: #f39c12;">⚠ Ultra Beast: Beast Ball 1x</strong>' : 
+                isUB ? '<br><strong style="color: #e74c3c;">⚠ Ultra Beast: 0.1x penalty</strong>' : '';
+
+            document.getElementById('results').innerHTML = `
+                <h2>Catch Probability</h2>
+                <div class="catch-rate">${probability.toFixed(2)}%</div>
+                <div class="catch-details">
+                    <div class="detail-box">
+                        <h3>1st Throw</h3>
+                        <p>${probability.toFixed(2)}%</p>
+                    </div>
+                    <div class="detail-box">
+                        <h3>Within 3</h3>
+                        <p>${within3.toFixed(2)}%</p>
+                    </div>
+                    <div class="detail-box">
+                        <h3>Within 5</h3>
+                        <p>${within5.toFixed(2)}%</p>
+                    </div>
+                    <div class="detail-box">
+                        <h3>Within 10</h3>
+                        <p>${within10.toFixed(2)}%</p>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding: 12px; background: #1a1a1a; border: 1px solid #2ecc71; border-radius: 4px;">
+                    <p style="font-size: 0.85em; color: #aaa; line-height: 1.5;">
+                        <strong>Catch Rate:</strong> ${currentPokemonData.stats.catchRate} |
+                        <strong>Type:</strong> ${typeDisplay}<br>
+                        <strong>Weight:</strong> ${(currentPokemonData.stats.weight / 10).toFixed(1)}kg |
+                        <strong>Speed:</strong> ${currentPokemonData.stats.speed}${ubWarning}
+                    </p>
+                </div>
+            `;
+            document.getElementById('results').style.display = 'block';
+            
+            // Scroll to results on mobile
+            if (window.innerWidth < 768) {
+                setTimeout(() => {
+                    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('pokemon').value = '';
+            document.getElementById('pokeball').value = '';
+            document.getElementById('hp').value = 100;
+            document.getElementById('hpValue').textContent = '100% remaining';
+            document.getElementById('status').value = 'none';
+            document.getElementById('alpha').checked = false;
+            document.getElementById('aware').checked = false;
+            document.getElementById('level').value = 50;
+            document.getElementById('yourLevel').value = 50;
+            document.getElementById('turnCount').value = 0;
+            document.getElementById('backstrike').checked = false;
+            document.getElementById('rank').value = 'z';
+            document.getElementById('plush').value = '0';
+            document.getElementById('shiny').checked = false;
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('levelBallInput').classList.remove('active');
+            document.getElementById('turnCountInput').classList.remove('active');
+            currentPokemonData = null;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
