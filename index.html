@@ -19,6 +19,7 @@
             background: #1a1a1a;
             min-height: 100vh;
             padding: 10px;
+            padding-bottom: 80px; /* Space for fixed banner on mobile */
             color: #333;
             font-size: 16px;
         }
@@ -26,6 +27,7 @@
         @media (min-width: 768px) {
             body {
                 padding: 20px;
+                padding-bottom: 20px;
             }
         }
         
@@ -343,43 +345,123 @@
             line-height: 1.4;
         }
         
-        .results {
+        /* Results Banner Styling */
+        .results-banner {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
             background: #000;
             color: white;
-            padding: 20px;
-            margin-top: 15px;
-            border: 3px solid #2ecc71;
-            border-radius: 4px;
+            border-top: 3px solid #2ecc71;
+            z-index: 1000;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: all 0.3s ease;
         }
         
         @media (min-width: 768px) {
-            .results {
-                padding: 25px;
+            .results-banner {
+                position: static;
                 margin-top: 20px;
+                border: 3px solid #2ecc71;
+                border-radius: 4px;
+                cursor: default;
             }
         }
         
-        .results h2 {
+        .results-banner.visible {
+            display: block;
+        }
+        
+        /* Collapsed state - mobile banner */
+        .results-collapsed {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        @media (min-width: 768px) {
+            .results-collapsed {
+                display: none;
+            }
+        }
+        
+        .results-collapsed-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .results-collapsed-label {
+            font-size: 0.9em;
+            color: #aaa;
+            font-weight: 600;
+        }
+        
+        .results-collapsed-rate {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2ecc71;
+        }
+        
+        .results-expand-icon {
+            font-size: 1.5em;
+            color: #2ecc71;
+            transition: transform 0.3s;
+        }
+        
+        .results-banner.expanded .results-expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* Expanded state - full details */
+        .results-expanded {
+            display: none;
+            padding: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .results-expanded {
+                display: block;
+                padding: 25px;
+            }
+        }
+        
+        .results-banner.expanded .results-expanded {
+            display: block;
+        }
+        
+        .results-banner.expanded .results-collapsed {
+            border-bottom: 1px solid #333;
+        }
+        
+        .results-expanded h2 {
             font-size: 1.2em;
             margin-bottom: 15px;
             color: #2ecc71;
         }
         
         @media (min-width: 768px) {
-            .results h2 {
+            .results-expanded h2 {
                 font-size: 1.4em;
             }
         }
         
-        .catch-rate {
+        .catch-rate-full {
             font-size: 2.5em;
             font-weight: bold;
             margin: 15px 0;
             color: #2ecc71;
+            text-align: center;
         }
         
         @media (min-width: 768px) {
-            .catch-rate {
+            .catch-rate-full {
                 font-size: 3.5em;
             }
         }
@@ -435,6 +517,20 @@
             .detail-box p {
                 font-size: 1.2em;
             }
+        }
+        
+        .pokemon-info {
+            margin-top: 15px;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #2ecc71;
+            border-radius: 4px;
+        }
+        
+        .pokemon-info p {
+            font-size: 0.85em;
+            color: #aaa;
+            line-height: 1.5;
         }
         
         .reset-btn {
@@ -511,7 +607,6 @@
             display: none;
         }
         
-        /* Prevent zoom on input focus for iOS */
         @media screen and (max-width: 767px) {
             input[type="text"]:focus,
             input[type="number"]:focus,
@@ -520,22 +615,8 @@
             }
         }
         
-        /* Better scrolling on mobile */
         html {
             -webkit-overflow-scrolling: touch;
-        }
-        
-        /* Sticky results on mobile */
-        @media (max-width: 767px) {
-            .results {
-                position: sticky;
-                bottom: 0;
-                margin-top: 0;
-                border-radius: 0;
-                border-left: none;
-                border-right: none;
-                border-bottom: none;
-            }
         }
     </style>
 </head>
@@ -691,6 +772,7 @@
                     <option value="2">Level 2 (1.2x)</option>
                     <option value="3">Level 3 (1.35x)</option>
                 </select>
+                <p class="hint">💾 Level, Rank, and Plush settings are saved automatically</p>
             </div>
             
             <div class="form-group">
@@ -701,35 +783,50 @@
             </div>
             
             <button class="reset-btn" onclick="resetForm()" type="button">Reset All</button>
-            
-            <div class="results" id="results" style="display: none;">
-                <h2>Catch Probability</h2>
-                <div class="catch-rate" id="catchRate">0%</div>
-                <div class="catch-details">
-                    <div class="detail-box">
-                        <h3>1st Throw</h3>
-                        <p id="firstThrow">0%</p>
-                    </div>
-                    <div class="detail-box">
-                        <h3>Within 3</h3>
-                        <p id="threeThrows">0%</p>
-                    </div>
-                    <div class="detail-box">
-                        <h3>Within 5</h3>
-                        <p id="fiveThrows">0%</p>
-                    </div>
-                    <div class="detail-box">
-                        <h3>Within 10</h3>
-                        <p id="tenThrows">0%</p>
-                    </div>
+        </div>
+    </div>
+    
+    <!-- Results Banner (Mobile: bottom banner, Desktop: inline) -->
+    <div class="results-banner" id="resultsBanner">
+        <!-- Collapsed view (mobile only) -->
+        <div class="results-collapsed" onclick="toggleResults()">
+            <div class="results-collapsed-content">
+                <span class="results-collapsed-label">Catch Rate:</span>
+                <span class="results-collapsed-rate" id="collapsedRate">0%</span>
+            </div>
+            <span class="results-expand-icon">▼</span>
+        </div>
+        
+        <!-- Expanded view -->
+        <div class="results-expanded">
+            <h2>Catch Probability</h2>
+            <div class="catch-rate-full" id="expandedRate">0%</div>
+            <div class="catch-details">
+                <div class="detail-box">
+                    <h3>1st Throw</h3>
+                    <p id="firstThrow">0%</p>
+                </div>
+                <div class="detail-box">
+                    <h3>Within 3</h3>
+                    <p id="threeThrows">0%</p>
+                </div>
+                <div class="detail-box">
+                    <h3>Within 5</h3>
+                    <p id="fiveThrows">0%</p>
+                </div>
+                <div class="detail-box">
+                    <h3>Within 10</h3>
+                    <p id="tenThrows">0%</p>
                 </div>
             </div>
+            <div class="pokemon-info" id="pokemonInfo"></div>
         </div>
     </div>
 
     <script>
         let pokemonDatabase = [];
         let currentPokemonData = null;
+        let resultsExpanded = false;
 
         const rankModifiers = {
             z: [1, 0.7, 0.5, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
@@ -749,11 +846,23 @@
 
         const ultraBeastIDs = [793, 794, 795, 796, 797, 798, 799, 803, 804, 805, 806];
 
-        // Helper function to toggle checkboxes via label tap
         function toggleCheckbox(id) {
             const checkbox = document.getElementById(id);
             checkbox.checked = !checkbox.checked;
             checkbox.dispatchEvent(new Event('change'));
+        }
+
+        function toggleResults() {
+            if (window.innerWidth < 768) {
+                const banner = document.getElementById('resultsBanner');
+                resultsExpanded = !resultsExpanded;
+                
+                if (resultsExpanded) {
+                    banner.classList.add('expanded');
+                } else {
+                    banner.classList.remove('expanded');
+                }
+            }
         }
 
         async function autoLoadData() {
@@ -810,7 +919,42 @@
             reader.readAsText(file);
         }
 
-        window.addEventListener('DOMContentLoaded', autoLoadData);
+        // Load saved settings from localStorage
+        function loadSavedSettings() {
+            try {
+                const savedLevel = localStorage.getItem('pokemon-calc-level');
+                const savedRank = localStorage.getItem('pokemon-calc-rank');
+                const savedPlush = localStorage.getItem('pokemon-calc-plush');
+                
+                if (savedLevel) {
+                    document.getElementById('level').value = savedLevel;
+                }
+                if (savedRank) {
+                    document.getElementById('rank').value = savedRank;
+                }
+                if (savedPlush) {
+                    document.getElementById('plush').value = savedPlush;
+                }
+            } catch (e) {
+                // localStorage not available or blocked, silently fail
+                console.log('Could not load saved settings:', e);
+            }
+        }
+
+        // Save setting to localStorage
+        function saveSetting(key, value) {
+            try {
+                localStorage.setItem('pokemon-calc-' + key, value);
+            } catch (e) {
+                // localStorage not available or blocked, silently fail
+                console.log('Could not save setting:', e);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            autoLoadData();
+            loadSavedSettings();
+        });
 
         document.getElementById('pokeball').addEventListener('change', function() {
             const ball = this.value;
@@ -1067,6 +1211,7 @@
             let newValue = parseInt(levelInput.value) + delta;
             newValue = Math.max(1, Math.min(100, newValue));
             levelInput.value = newValue;
+            saveSetting('level', newValue);
             calculate();
         }
 
@@ -1089,7 +1234,17 @@
         ['pokeball', 'alpha', 'aware', 'level', 'backstrike', 'rank', 'plush', 'shiny', 'status', 'yourLevel', 'turnCount'].forEach(id => {
             const element = document.getElementById(id);
             if (element) {
-                element.addEventListener('change', calculate);
+                element.addEventListener('change', function() {
+                    // Save persistent settings
+                    if (id === 'level') {
+                        saveSetting('level', this.value);
+                    } else if (id === 'rank') {
+                        saveSetting('rank', this.value);
+                    } else if (id === 'plush') {
+                        saveSetting('plush', this.value);
+                    }
+                    calculate();
+                });
             }
         });
 
@@ -1099,7 +1254,7 @@
             
             if (!pokemon || !pokeball || !currentPokemonData) {
                 if (!pokemon || !pokeball) {
-                    document.getElementById('results').style.display = 'none';
+                    document.getElementById('resultsBanner').classList.remove('visible');
                 }
                 return;
             }
@@ -1120,44 +1275,26 @@
                 '<br><strong style="color: #f39c12;">⚠ Ultra Beast: Beast Ball 1x</strong>' : 
                 isUB ? '<br><strong style="color: #e74c3c;">⚠ Ultra Beast: 0.1x penalty</strong>' : '';
 
-            document.getElementById('results').innerHTML = `
-                <h2>Catch Probability</h2>
-                <div class="catch-rate">${probability.toFixed(2)}%</div>
-                <div class="catch-details">
-                    <div class="detail-box">
-                        <h3>1st Throw</h3>
-                        <p>${probability.toFixed(2)}%</p>
-                    </div>
-                    <div class="detail-box">
-                        <h3>Within 3</h3>
-                        <p>${within3.toFixed(2)}%</p>
-                    </div>
-                    <div class="detail-box">
-                        <h3>Within 5</h3>
-                        <p>${within5.toFixed(2)}%</p>
-                    </div>
-                    <div class="detail-box">
-                        <h3>Within 10</h3>
-                        <p>${within10.toFixed(2)}%</p>
-                    </div>
-                </div>
-                <div style="margin-top: 15px; padding: 12px; background: #1a1a1a; border: 1px solid #2ecc71; border-radius: 4px;">
-                    <p style="font-size: 0.85em; color: #aaa; line-height: 1.5;">
-                        <strong>Catch Rate:</strong> ${currentPokemonData.stats.catchRate} |
-                        <strong>Type:</strong> ${typeDisplay}<br>
-                        <strong>Weight:</strong> ${(currentPokemonData.stats.weight / 10).toFixed(1)}kg |
-                        <strong>Speed:</strong> ${currentPokemonData.stats.speed}${ubWarning}
-                    </p>
-                </div>
-            `;
-            document.getElementById('results').style.display = 'block';
+            // Update collapsed view
+            document.getElementById('collapsedRate').textContent = probability.toFixed(2) + '%';
             
-            // Scroll to results on mobile
-            if (window.innerWidth < 768) {
-                setTimeout(() => {
-                    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }, 100);
-            }
+            // Update expanded view
+            document.getElementById('expandedRate').textContent = probability.toFixed(2) + '%';
+            document.getElementById('firstThrow').textContent = probability.toFixed(2) + '%';
+            document.getElementById('threeThrows').textContent = within3.toFixed(2) + '%';
+            document.getElementById('fiveThrows').textContent = within5.toFixed(2) + '%';
+            document.getElementById('tenThrows').textContent = within10.toFixed(2) + '%';
+            
+            document.getElementById('pokemonInfo').innerHTML = `
+                <p>
+                    <strong>Catch Rate:</strong> ${currentPokemonData.stats.catchRate} |
+                    <strong>Type:</strong> ${typeDisplay}<br>
+                    <strong>Weight:</strong> ${(currentPokemonData.stats.weight / 10).toFixed(1)}kg |
+                    <strong>Speed:</strong> ${currentPokemonData.stats.speed}${ubWarning}
+                </p>
+            `;
+            
+            document.getElementById('resultsBanner').classList.add('visible');
         }
 
         function resetForm() {
@@ -1175,10 +1312,12 @@
             document.getElementById('rank').value = 'z';
             document.getElementById('plush').value = '0';
             document.getElementById('shiny').checked = false;
-            document.getElementById('results').style.display = 'none';
+            document.getElementById('resultsBanner').classList.remove('visible');
+            document.getElementById('resultsBanner').classList.remove('expanded');
             document.getElementById('levelBallInput').classList.remove('active');
             document.getElementById('turnCountInput').classList.remove('active');
             currentPokemonData = null;
+            resultsExpanded = false;
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
