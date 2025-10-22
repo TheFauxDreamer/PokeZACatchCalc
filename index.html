@@ -877,14 +877,14 @@
                 const data = await response.json();
                 pokemonDatabase = data;
                 
-                document.getElementById('fileStatus').className = 'file-status success';
-                document.getElementById('fileStatus').textContent = 
-                    `✓ Loaded ${pokemonDatabase.length} Pokémon!`;
+                // Hide status on successful load
+                document.getElementById('fileStatus').style.display = 'none';
                 
                 document.getElementById('pokemon').disabled = false;
                 document.getElementById('pokemon').placeholder = 'Type Pokémon name...';
                 
             } catch (error) {
+                document.getElementById('fileStatus').style.display = 'block';
                 document.getElementById('fileStatus').className = 'file-status error';
                 document.getElementById('fileStatus').innerHTML = 
                     `✗ Could not load ${dataFilename}<br>` +
