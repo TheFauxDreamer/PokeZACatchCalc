@@ -624,7 +624,6 @@
     <div class="container">
         <div class="header">
             <h1>Pokémon Legends: Z-A Catch Calculator</h1>
-            <p>100% Accurate - Mobile Optimized</p>
         </div>
         
         <div class="file-upload-section">
@@ -717,14 +716,14 @@
             <div class="form-group">
                 <div class="checkbox-group" onclick="toggleCheckbox('alpha')">
                     <input type="checkbox" id="alpha" onclick="event.stopPropagation()">
-                    <label for="alpha">Alpha Pokémon</label>
+                    <label for="alpha" onclick="event.stopPropagation()">Alpha Pokémon</label>
                 </div>
             </div>
             
             <div class="form-group">
                 <div class="checkbox-group" onclick="toggleCheckbox('aware')">
                     <input type="checkbox" id="aware" onclick="event.stopPropagation()">
-                    <label for="aware">Aware of You</label>
+                    <label for="aware" onclick="event.stopPropagation()">Aware of You</label>
                 </div>
                 <p class="hint">Check if Pokémon has "?" above head, attacking, fleeing, or stunned</p>
             </div>
@@ -741,7 +740,7 @@
             <div class="form-group">
                 <div class="checkbox-group" onclick="toggleCheckbox('backstrike')">
                     <input type="checkbox" id="backstrike" onclick="event.stopPropagation()">
-                    <label for="backstrike">Backstrike (2x)</label>
+                    <label for="backstrike" onclick="event.stopPropagation()">Backstrike (2x)</label>
                 </div>
             </div>
             
@@ -778,7 +777,7 @@
             <div class="form-group">
                 <div class="checkbox-group" onclick="toggleCheckbox('shiny')">
                     <input type="checkbox" id="shiny" onclick="event.stopPropagation()">
-                    <label for="shiny">Shiny (3x bonus)</label>
+                    <label for="shiny" onclick="event.stopPropagation()">Shiny (3x bonus)</label>
                 </div>
             </div>
             
@@ -877,13 +876,16 @@
                 const data = await response.json();
                 pokemonDatabase = data;
                 
-                // Hide status on successful load
-                document.getElementById('fileStatus').style.display = 'none';
+                // Hide entire upload section on successful load
+                const uploadSection = document.querySelector('.file-upload-section');
+                uploadSection.style.setProperty('display', 'none', 'important');
                 
                 document.getElementById('pokemon').disabled = false;
                 document.getElementById('pokemon').placeholder = 'Type Pokémon name...';
                 
             } catch (error) {
+                const uploadSection = document.querySelector('.file-upload-section');
+                uploadSection.style.setProperty('display', 'block', 'important');
                 document.getElementById('fileStatus').style.display = 'block';
                 document.getElementById('fileStatus').className = 'file-status error';
                 document.getElementById('fileStatus').innerHTML = 
@@ -902,9 +904,10 @@
             reader.onload = function(e) {
                 try {
                     pokemonDatabase = JSON.parse(e.target.result);
-                    document.getElementById('fileStatus').className = 'file-status success';
-                    document.getElementById('fileStatus').textContent = 
-                        `✓ Loaded ${pokemonDatabase.length} Pokémon!`;
+                    
+                    // Hide entire upload section on successful load
+                    const uploadSection = document.querySelector('.file-upload-section');
+                    uploadSection.style.setProperty('display', 'none', 'important');
                     
                     document.getElementById('pokemon').disabled = false;
                     document.getElementById('pokemon').placeholder = 'Type Pokémon name...';
